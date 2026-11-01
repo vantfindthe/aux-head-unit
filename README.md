@@ -25,7 +25,7 @@ If the companion is killed mid-game, the next start puts back any app volumes it
 
 ## free and pro
 
-I tried to make the best parts free, and the least important functions the donation part. So if you want to be able to see the album cover from your phone and control playback on said phone, then you can go to the link below. The amount is up to you, but I seriously have nothing to my name but a computer, a studio apartment, and a WiFi connection. If you like this kinda stuff and wanna help out a fellow gamer, I wouldn’t be opposed.
+I tried to make the best parts free, and the least important functions the donation part. So if you want to be able to see the album cover and control playback, then you can go to the link below. The amount is up to you, but I seriously have nothing to my name but a computer, a studio apartment, and a WiFi connection. If you like this kinda stuff and wanna help out a fellow gamer, I wouldn’t be opposed.
 
 
 Head Unit Pro, a paid upgrade (https://ko-fi.com/imhousing), adds song info, album art and play/pause/skip on the head unit, VLC, and the Head Unit Mod Remote Android app for the phone's song, cover and controls.
