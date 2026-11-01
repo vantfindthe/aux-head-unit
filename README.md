@@ -23,7 +23,7 @@ If the companion is killed mid-game, the next start puts back any app volumes it
 
 ## free and pro
 
-The free companion (`AuxHeadUnit.exe`, source in `companion/`, built with `companion/build.bat` using the C# compiler that comes with Windows) does the sound: the PC player or phone follows the car. Aux Head Unit Pro, a paid upgrade, adds song info, album art and play/pause/skip on the head unit, VLC, and the Head Unit Mod Remote Android app for the phone's song, cover and controls. The mod is the same for both; with the free companion it hides the song display and player buttons. To try the companion without the game: `py -3 companion/tools/fake_game.py 6 0.5`.
+The free companion (`AuxHeadUnit.exe`, source in `companion/`, built with `companion/build.bat` using the C# compiler that comes with Windows) does the sound: the PC player or phone follows the car. Aux Head Unit Pro, a paid upgrade (https://ko-fi.com/imhousing), adds song info, album art and play/pause/skip on the head unit, VLC, and the Head Unit Mod Remote Android app for the phone's song, cover and controls. The mod is the same for both; with the free companion it hides the song display and player buttons. To try the companion without the game: `py -3 companion/tools/fake_game.py 6 0.5`.
 
 ```
 .__        .__                        .__                
