@@ -11,15 +11,25 @@ The app's original mixer level comes back when the game or companion closes.
 
 
 
+## install
+
+**Download from [Releases](https://github.com/vantfindthe/aux-head-unit/releases/latest), not the green "Code > Download ZIP" button.** That button gives you the source code, which isn't a working mod (BeamNG can't find the UI app inside it) and has no `AuxHeadUnit.exe`.
+
+From the latest release, grab both files:
+
+- **`aux_head_unit.zip`**: the mod. Put it in your BeamNG mods folder as-is, don't unzip it (`Documents\BeamNG.drive\current\mods`, or open the game's Mod Manager and click "Open Mods Folder").
+- **`AuxHeadUnit_companion.zip`**: the companion app. Unzip it somewhere permanent, like `Documents\AuxHeadUnit`. It has `AuxHeadUnit.exe` ready to run, no building needed. Windows may say "Windows protected your PC" because the app isn't signed: click "More info", then "Run anyway".
+
+If you'd rather build the exe yourself from the source here, double-click `companion/build.bat`. It uses the C# compiler that comes with Windows (no Visual Studio needed) and puts `AuxHeadUnit.exe` in the `companion` folder.
+
 ## how to operate
 
-1. start `companion/AuxHeadUnit.exe` and leave its window open.
-2. in beamng, add the **Aux Head Unit** ui app.
-3. phone: pair it with the pc in windows bluetooth settings
-4. head unit menu (the ≡ button), press **connect** next to the phone, switch the source to **bluetooth**, and play music on the phone. the companion reconnects to the last phone automatically next time.
+1. start `AuxHeadUnit.exe` and leave its window open.
+2. in beamng, open the UI apps menu and add the **Aux Head Unit** app from the **Dashboard** category.
+3. play music on your PC (Spotify, a browser, anything in the Windows volume pop-up). that's it for PC music.
+4. phone: pair it with the pc in windows bluetooth settings once. then in the head unit menu (the ≡ button), press **connect** next to the phone, switch the source to **bluetooth**, and play music on the phone. the companion reconnects to the last phone automatically next time.
 
-
-Phone: pair it with the PC in Windows Bluetooth settings once, then open the head unit menu (the ≡ button), press **Connect** next to the phone, switch the source to **BLUETOOTH**, and play music on the phone. The companion reconnects to the last phone automatically next time.
+**App not in the list?** The mod zip is the wrong one or got unzipped: the mods folder should have `aux_head_unit.zip` directly in it, and inside that zip `lua`, `scripts`, `ui` and `vehicles` should be the top-level folders. Restart the game after fixing it.
 
 If the companion is killed mid-game, the next start puts back any app volumes it had turned down (saved in `companion/state.json`).
 
