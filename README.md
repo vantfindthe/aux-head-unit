@@ -1,3 +1,5 @@
+"https://www.youtube.com/embed/3QaeNEeESDY" 
+
 # Aux Head Unit for BeamNG.drive
 
 You can pair your phone to your cars Bluetooth so why not your virtual car? Play Spotify (or any app that shows up in Windows' media controls) or stream from your phone over Bluetooth.  Sadly you can only control the local spotify or other media exe, the Bluetooth stream is just audio. The music follows the car: it's muted with the ignition or head unit off and, by default, quieter outside the car, fading
@@ -34,7 +36,7 @@ The free companion (`AuxHeadUnit.exe`, source in `companion/`, built with `compa
          \/     \/                  \/        \//_____/  
 ```
 
-buy me a beer
+buy me a ramen
 cashapp:
 $markkaspertl
 
