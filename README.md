@@ -2,7 +2,7 @@
 
 # Aux Head Unit for BeamNG.drive
 
-You can pair your phone to your cars Bluetooth so why not your virtual car? Play Spotify (or any app that shows up in Windows' media controls) or stream from your phone over Bluetooth.  Sadly you can only control the local spotify or other media exe, the Bluetooth stream is just audio. The music follows the car: it's muted with the ignition or head unit off and, by default, quieter outside the car, fading
+You can pair your phone to your cars Bluetooth so why not your virtual car? Play Spotify (or any app that shows up in Windows' media controls) or stream from your phone over Bluetooth.  You can control the local spotify or other media exe but the Bluetooth stream is just audio.  Below theres a link to the paid feature that enables control of the bt device. The music follows the car: it's muted with the ignition or head unit off and, by default, quieter outside the car, fading
 with distance.
 
 The audio never actually goes through the game. The companion app sets the playing app's volume in the Windows mixer based on what the mod tells it: the head unit's volume is the mixer level (head unit 60 = 60 in the Windows mixer), scaled by the car's speakers part (Speakers slot under the dash-mount head unit: 939 Guys top out at 65, CaneTurf Mail Order at 90, DIY 4kW Install at 100; their bass and treble numbers aren't used yet). Driving in any camera counts as being in the car; walking away or using the free camera makes it quieter with distance (unless set to "Always full").
