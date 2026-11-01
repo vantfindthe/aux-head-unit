@@ -1,0 +1,22 @@
+{
+  "domElement": "<bt-head-unit></bt-head-unit>",
+  "name": "Aux Head Unit",
+  "types": [
+    "ui.apps.categories.vehicle_control"
+  ],
+  "description": "Car stereo for your own music: Spotify and other PC players, or your phone over Bluetooth. Needs AuxHeadUnit.exe running.",
+  "css": {
+    "left": "20px",
+    "bottom": "20px",
+    "width": "460px",
+    "height": "190px",
+    "min-width": "360px",
+    "min-height": "160px"
+  },
+  "author": "markk",
+  "version": "1.0",
+  "directive": "btHeadUnit",
+  "category": "Dashboard",
+  "isAuxiliary": false,
+  "interactive": "yes"
+}

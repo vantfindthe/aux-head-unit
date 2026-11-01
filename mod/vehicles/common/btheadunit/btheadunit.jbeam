@@ -1,0 +1,76 @@
+{
+"btheadunit_gps": {
+    "information":{
+        "authors":"markk",
+        "name":"Aux Head Unit (dash mount)",
+        "value":300,
+    },
+    "slotType" : "gps",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitScreen"],
+    ],
+    "slots": [
+        ["type", "default", "description"],
+        ["btheadunit_speakers", "btheadunit_speakers_939guys", "Speakers"],
+    ],
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["suctionmount", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+         ["gpsholder", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+         ["gps", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+    ],
+    "glowMap":{
+        "screen_gps":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"screen_gps", "on_intense":"screen_gps_dim"},
+    },
+},
+"btheadunit_gps_alt": {
+    "information":{
+        "authors":"markk",
+        "name":"Aux Head Unit (dash mount)",
+        "value":300,
+    },
+    "slotType" : "gps_alt",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitScreen"],
+    ],
+    "slots": [
+        ["type", "default", "description"],
+        ["btheadunit_speakers", "btheadunit_speakers_939guys", "Speakers"],
+    ],
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["suctionmount_alt", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+         ["gpsholder", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+         ["gps", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+    ],
+    "glowMap":{
+        "screen_gps":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"screen_gps", "on_intense":"screen_gps_dim"},
+    },
+},
+"btheadunit_gps_altb": {
+    "information":{
+        "authors":"markk",
+        "name":"Aux Head Unit (dash mount)",
+        "value":300,
+    },
+    "slotType" : "gps_altb",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitScreen"],
+    ],
+    "slots": [
+        ["type", "default", "description"],
+        ["btheadunit_speakers", "btheadunit_speakers_939guys", "Speakers"],
+    ],
+    "flexbodies": [
+         ["mesh", "[group]:", "nonFlexMaterials"],
+         ["gpsholder", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+         ["gps", ["gps"], [],{"pos":{"x":0,"y":0,"z":0}}],
+    ],
+    "glowMap":{
+        "screen_gps":{"simpleFunction":{"ignitionLevel":0.1, "lowhighbeam":1}, "off":"screen_off","on":"screen_gps", "on_intense":"screen_gps_dim"},
+    },
+},
+}

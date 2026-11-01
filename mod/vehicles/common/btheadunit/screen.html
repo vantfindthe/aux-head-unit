@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<style>
+  html, body { margin: 0; width: 100%; height: 100%; overflow: hidden; background: #000; }
+  body { font-family: "Segoe UI", Roboto, Arial, sans-serif; color: #eef1f5; }
+  #unit { position: absolute; left: 0; top: 0; right: 0; bottom: 0; padding: 14px 18px; box-sizing: border-box;
+    display: flex; flex-direction: column; background: linear-gradient(160deg, #141a26, #05070a); }
+  #unit.off { display: none; }
+  .top { display: flex; align-items: center; gap: 10px; font-size: 15px; color: #8f9aab; letter-spacing: .04em; }
+  #src { padding: 2px 8px; border-radius: 4px; background: #26303d; color: #7fb6ff; font-weight: 600; }
+  #src.bt { background: #1d3550; color: #8fd0ff; }
+  #status { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #clock { color: #c6ced9; font-weight: 600; }
+  .main { flex: 1; display: flex; align-items: center; gap: 16px; margin-top: 8px; min-height: 0; }
+  #art { width: 172px; height: 172px; flex: none; border-radius: 6px; background: #1e232c center / cover no-repeat;
+    display: flex; align-items: center; justify-content: center; font-size: 64px; color: #3a414d; }
+  .info { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
+  .line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #title { font-size: 28px; font-weight: 600; }
+  #artist { font-size: 20px; color: #b9c2cf; margin-top: 2px; }
+  #album { font-size: 15px; color: #7c8696; margin-top: 2px; }
+  .bar { height: 6px; background: #273041; border-radius: 3px; margin-top: 16px; }
+  #prog { height: 100%; width: 0; background: #4fa3ff; border-radius: 3px; }
+  .times { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #7c8696; margin-top: 5px; }
+  #state { color: #c6ced9; font-size: 13px; letter-spacing: .08em; }
+  #vol { position: absolute; left: 18px; right: 18px; bottom: 12px; height: 34px; display: none; align-items: center; gap: 12px;
+    padding: 0 12px; border-radius: 6px; background: #0b0e14ee; border: 1px solid #2c3442; font-size: 16px; font-weight: 600; }
+  #vol.show { display: flex; }
+  #vol .bar { flex: 1; margin: 0; height: 8px; }
+  #volFill { height: 100%; width: 0; background: #c6ced9; border-radius: 4px; }
+</style>
+</head>
+<body>
+  <script>
+    // Laid out for 512 wide; a car screen that loaded this page in place of its map may be smaller.
+    if (innerWidth > 0 && innerWidth < 500) {
+      var root = document.documentElement.style;
+      root.width = '512px'; root.height = '256px'; root.transformOrigin = '0 0';
+      root.transform = 'scale(' + innerWidth / 512 + ',' + innerHeight / 256 + ')';
+    }
+  </script>
+  <div id="unit" class="off">
+    <div class="top">
+      <span id="src">PC MEDIA</span>
+      <span id="status"></span>
+      <span id="clock"></span>
+    </div>
+    <div class="main">
+      <div id="art">&#9835;</div>
+      <div class="info">
+        <div id="title" class="line">Nothing playing</div>
+        <div id="artist" class="line"></div>
+        <div id="album" class="line"></div>
+        <div id="progress" class="bar"><div id="prog"></div></div>
+        <div id="times" class="times"><span id="pos">0:00</span><span id="state"></span><span id="dur">0:00</span></div>
+      </div>
+    </div>
+    <div id="vol"><span>VOL</span><div class="bar"><div id="volFill"></div></div><span id="volNum">0</span></div>
+  </div>
+</body>
+<script>
+  // Fed by the btHeadUnitScreen vehicle controller, or by btHeadUnitDash when
+  // shown on a car's own navigation screen. There the navigator keeps sending
+  // map.* calls, so swallow them.
+  window.map = new Proxy({}, { get: function () { return function () {} } })
+  var $ = function (id) { return document.getElementById(id) }
+  var lastVol = null, volTimer = null, artId = null
+
+  function time(sec) {
+    if (!(sec > 0)) return '0:00'
+    sec = Math.floor(sec)
+    var m = Math.floor(sec / 60), r = sec % 60
+    return m + ':' + (r < 10 ? '0' : '') + r
+  }
+
+  function setText(id, text) {
+    var el = $(id)
+    if (el.textContent !== text) el.textContent = text
+  }
+
+  function tickClock() {
+    var d = new Date(), h = d.getHours() % 12 || 12, m = d.getMinutes()
+    setText('clock', h + ':' + (m < 10 ? '0' : '') + m)
+  }
+  setInterval(tickClock, 5000)
+  tickClock()
+
+  window.hu = {
+    update: function (d) {
+      $('unit').className = d.on ? '' : 'off'
+      if (!d.on) return
+      $('src').className = d.src == 'bt' ? 'bt' : ''
+      setText('src', d.src == 'bt' ? 'BLUETOOTH' : 'PC MEDIA')
+      setText('status', d.status || '')
+      // The free companion sends no song info: name the source and hide the progress bar.
+      var pro = d.pro !== false
+      $('progress').style.visibility = $('times').style.visibility = pro ? '' : 'hidden'
+      setText('title', d.title || (pro ? 'Nothing playing' : d.src == 'bt' ? 'Bluetooth audio' : 'PC audio'))
+      setText('artist', d.artist || '')
+      setText('album', d.album || '')
+      setText('pos', time(d.pos))
+      setText('dur', time(d.dur))
+      setText('state', d.title ? (d.playing ? 'PLAYING' : 'PAUSED') : '')
+      $('prog').style.width = (d.dur > 0 ? Math.min(100, 100 * (d.pos || 0) / d.dur) : 0) + '%'
+
+      var vol = Math.round((d.vol || 0) * 100)
+      if (lastVol !== null && vol !== lastVol) {
+        $('vol').className = 'show'
+        clearTimeout(volTimer)
+        volTimer = setTimeout(function () { $('vol').className = '' }, 2000)
+      }
+      lastVol = vol
+      $('volFill').style.width = vol + '%'
+      setText('volNum', String(vol))
+    },
+    art: function (d) {
+      if (d.id === artId) return
+      artId = d.id
+      var art = $('art')
+      if (d.data) {
+        art.style.backgroundImage = 'url(data:image/jpeg;base64,' + d.data + ')'
+        art.innerHTML = ''
+      } else {
+        art.style.backgroundImage = ''
+        art.innerHTML = '&#9835;'
+      }
+    }
+  }
+</script>
+</html>

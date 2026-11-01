@@ -1,0 +1,38 @@
+{
+"btheadunit_speakers_939guys": {
+    "information":{
+        "authors":"markk",
+        "name":"939 Guys Speakers",
+        "value":120,
+    },
+    "slotType" : "btheadunit_speakers",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitSpeakers", {"speakerName":"939 Guys", "maxVolume":0.65, "bassDb":-24, "trebleDb":0}],
+    ],
+},
+"btheadunit_speakers_caneturf": {
+    "information":{
+        "authors":"markk",
+        "name":"CaneTurf Mail Order Speakers",
+        "value":450,
+    },
+    "slotType" : "btheadunit_speakers",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitSpeakers", {"speakerName":"CaneTurf Mail Order", "maxVolume":0.9, "bassDb":0, "trebleDb":0}],
+    ],
+},
+"btheadunit_speakers_diy4kw": {
+    "information":{
+        "authors":"markk",
+        "name":"DIY 4kW Install",
+        "value":1800,
+    },
+    "slotType" : "btheadunit_speakers",
+    "controller": [
+        ["fileName"],
+        ["btHeadUnitSpeakers", {"speakerName":"DIY 4kW Install", "maxVolume":1.2, "bassDb":4, "trebleDb":1}],
+    ],
+},
+}

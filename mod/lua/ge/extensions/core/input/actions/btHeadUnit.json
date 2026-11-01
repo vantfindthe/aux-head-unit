@@ -1,0 +1,37 @@
+{
+  "btHeadUnitPlayPause": {
+    "cat": "menuExtra", "order": 900, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('toggle') end",
+    "title": "Head Unit: Play / Pause", "desc": "Play or pause the music on the BT head unit"
+  },
+  "btHeadUnitNext": {
+    "cat": "menuExtra", "order": 901, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('next') end",
+    "title": "Head Unit: Next track", "desc": "Skip to the next track"
+  },
+  "btHeadUnitPrev": {
+    "cat": "menuExtra", "order": 902, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('prev') end",
+    "title": "Head Unit: Previous track", "desc": "Go back to the previous track"
+  },
+  "btHeadUnitVolUp": {
+    "cat": "menuExtra", "order": 903, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('volUp') end",
+    "title": "Head Unit: Volume up", "desc": "Turn the head unit up"
+  },
+  "btHeadUnitVolDown": {
+    "cat": "menuExtra", "order": 904, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('volDown') end",
+    "title": "Head Unit: Volume down", "desc": "Turn the head unit down"
+  },
+  "btHeadUnitPower": {
+    "cat": "menuExtra", "order": 905, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('power') end",
+    "title": "Head Unit: Power", "desc": "Turn the head unit on or off"
+  },
+  "btHeadUnitSource": {
+    "cat": "menuExtra", "order": 906, "ctx": "tlua", "actionMap": "Normal",
+    "onDown": "if extensions.btHeadUnit then extensions.btHeadUnit.uiCmd('source') end",
+    "title": "Head Unit: Switch source", "desc": "Switch between PC media and phone Bluetooth"
+  }
+}

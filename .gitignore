@@ -1,0 +1,5 @@
+*.exe
+state.json
+vlc.json
+Pro.cs
+__pycache__/
