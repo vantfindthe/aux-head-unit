@@ -95,7 +95,7 @@ angular.module('beamng.apps')
     </div>
     <h4>SOUND OUTSIDE THE CAR</h4>
     <div class="bthu-row">
-      <span>{{s.settings.outside == 'full' ? 'Always full volume' : 'Quieter outside, fades with distance'}}</span>
+      <span>{{s.settings.outside == 'full' ? 'Always full volume' : 'Outside and in 3rd person: quieter, follows the car'}}</span>
       <button ng-click="cmd('outside')">{{s.settings.outside == 'full' ? 'Make realistic' : 'Always full'}}</button>
     </div>
     <h4>SPEAKERS</h4>

@@ -43,9 +43,10 @@ HOW THE SOUND WORKS
 The music isn't played by the game. The app sets your music player's (or
 phone's) volume in the Windows mixer to match the head unit: the head unit's
 volume is the mixer level, it goes silent with the ignition or head unit
-off, and it fades with distance when you walk away from the car (choose
-"Always full" in the menu to turn that off). When the game or this app
-closes, the player's original mixer volume is put back.
+off, and outside the cockpit (3rd person, on foot, free camera) it fades with
+distance and leans toward the side the car is on (choose "Always full" in the
+menu to turn that off). When the game or this app closes, the player's
+original mixer volume and balance are put back.
 
 The app only talks to the game on your own PC (UDP ports 47811 and 47812 on
 127.0.0.1). It doesn't use the internet.

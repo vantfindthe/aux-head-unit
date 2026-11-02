@@ -65,17 +65,24 @@ end
 
 local function sendState()
   local car, veh = getCar()
-  local inside, dist = false, 0
+  local inside, dist, pan, away = false, 0, 0, false
   if car then
-    -- Driving the car in any camera counts as sitting in it; only walking
-    -- away or flying the free camera off makes it sound like it's outside.
+    -- The check the game uses for its own interior sound: cockpit cameras are in
+    -- the car; 3rd person, walking away and the free camera hear it from outside.
+    local camPos = core_camera.getPosition()
+    local toCar = vec3(be:getObjectOOBBCenterXYZ(carId)) - camPos
+    dist = toCar:length()
+    local driving = veh ~= nil and veh:getID() == car:getID()
+    inside = driving and core_camera.isCameraInside(0, camPos) == 1
+    -- On foot or flying the free camera off, as opposed to driving from 3rd person.
     local cam = core_camera.getActiveCamName()
-    dist = core_camera.getPosition():distance(vec3(car:getPosition()))
-    inside = veh ~= nil and veh:getID() == car:getID() and cam ~= 'free' and cam ~= 'path'
+    away = not driving or cam == 'free' or cam == 'path'
+    -- Where the car is from the camera: -1 to the left, 1 to the right.
+    if dist > 0.01 then pan = toCar:dot(core_camera.getRight()) / dist end
   end
   send({
     t = 'state', power = settings.power, ign = ignition, hasCar = car ~= nil,
-    inside = inside, dist = dist, vol = settings.vol, src = settings.src,
+    inside = inside, away = away, dist = dist, pan = pan, vol = settings.vol, src = settings.src,
     outside = settings.outside, haveArt = art.id,
     spkMax = speakers and speakers.maxVolume or 1, spkBass = speakers and speakers.bassDb or 0,
     spkTreble = speakers and speakers.trebleDb or 0,

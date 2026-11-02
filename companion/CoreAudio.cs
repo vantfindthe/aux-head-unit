@@ -73,6 +73,16 @@ namespace BTHeadUnit
         [PreserveSig] int GetMute(out int mute);
     }
 
+    [ComImport, Guid("1C158861-B533-4B30-B1CF-E853E51C59B8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    interface IChannelAudioVolume
+    {
+        [PreserveSig] int GetChannelCount(out uint count);
+        [PreserveSig] int SetChannelVolume(uint index, float level, ref Guid eventContext);
+        [PreserveSig] int GetChannelVolume(uint index, out float level);
+        [PreserveSig] int SetAllVolumes(uint count, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] float[] levels, ref Guid eventContext);
+        [PreserveSig] int GetAllVolumes(uint count, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] float[] levels);
+    }
+
     class AudioSession
     {
         public string Key;      // session instance id (unique per stream)
@@ -80,6 +90,22 @@ namespace BTHeadUnit
         public string Proc;     // lower-case process name, "" if unknown
         public bool Active;     // currently playing sound
         public ISimpleAudioVolume Volume;
+        public IChannelAudioVolume Channels;   // null if the session has none
+
+        // Each speaker channel's volume (0..1), on top of the mixer volume. Null if unavailable.
+        public float[] GetChannels()
+        {
+            uint n;
+            if (Channels == null || Channels.GetChannelCount(out n) != 0 || n == 0) return null;
+            var levels = new float[n];
+            return Channels.GetAllVolumes(n, levels) == 0 ? levels : null;
+        }
+
+        public void SetChannels(float[] levels)
+        {
+            Guid ctx = CoreAudio.EventContext;
+            if (Channels != null) Channels.SetAllVolumes((uint)levels.Length, levels, ref ctx);
+        }
 
         public float Get()
         {
@@ -156,7 +182,7 @@ namespace BTHeadUnit
                     ctl.GetSessionInstanceIdentifier(out key);
                     int state;
                     ctl.GetState(out state);
-                    list.Add(new AudioSession { Key = key ?? "", Pid = pid, Proc = system ? "(system sounds)" : ProcName(pid), Active = state == 1, Volume = (ISimpleAudioVolume)ctl });
+                    list.Add(new AudioSession { Key = key ?? "", Pid = pid, Proc = system ? "(system sounds)" : ProcName(pid), Active = state == 1, Volume = (ISimpleAudioVolume)ctl, Channels = ctl as IChannelAudioVolume });
                 }
             }
             return list;

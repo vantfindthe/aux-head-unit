@@ -5,8 +5,8 @@
 //   us    -> 127.0.0.1:47812  {"t":"np", ...} 4x/s, {"t":"art", ...} when the game lacks the current cover
 //
 // The music itself never goes through the game: we follow the car's state
-// (ignition, head unit power and volume, camera in or out of the car) by
-// adjusting the playing app's volume in the Windows mixer.
+// (ignition, head unit power and volume, camera in or out of the car and which
+// side the car is on) by adjusting the playing app's volume in the Windows mixer.
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -38,7 +38,8 @@ namespace BTHeadUnit
         // Latest car state from the game (guarded by sync)
         static long lastStateMs = -100000;
         static bool power = true, ignition = true, hasCar, inside;
-        static double distance, volume = 0.8;
+        static bool away;   // out of the vehicle (on foot, free camera), not just driving from 3rd person
+        static double distance, pan, volume = 0.8;   // pan: where the car is from the camera, -1 left to 1 right
         static double speakerMax = 1;   // the car's speakers part: how loud they go (bass/treble need the sound to pass through us, not done yet)
         static string source = "pc", outsideMode = "realistic";
         static int gameArtId = -1;
@@ -206,7 +207,9 @@ namespace BTHeadUnit
                             ignition = Bool(m, "ign", true);
                             hasCar = Bool(m, "hasCar", false);
                             inside = Bool(m, "inside", false);
+                            away = Bool(m, "away", false);
                             distance = Num(m, "dist", 0);
+                            pan = Math.Max(-1, Math.Min(1, Num(m, "pan", 0)));
                             volume = Math.Max(0, Math.Min(1, Num(m, "vol", 0.8)));
                             speakerMax = Math.Max(0, Num(m, "spkMax", 1));
                             source = Str(m, "src") == "bt" ? "bt" : "pc";
@@ -333,8 +336,27 @@ namespace BTHeadUnit
             double full = Math.Min(1, volume * speakerMax);
             if (inside || outsideMode == "full") return full;
             if (distance > 80) return 0;
-            // Standing next to the car with the doors shut: roughly half as loud, fading with distance.
-            return full * 0.5 / (1 + distance / 6.0);
+            // Right next to the car with the doors shut: half as loud in 3rd person, a bit less
+            // out of the vehicle, fading with distance.
+            return full * (away ? 0.35 : 0.5) / (1 + distance / 6.0);
+        }
+
+        // Heard from outside, the music comes from where the car is; inside it's all around you.
+        static double TargetPan()
+        {
+            return inside || !hasCar || outsideMode == "full" ? 0 : pan;
+        }
+
+        // The channel volumes for a pan: the side away from the car drops, down to 30% at the far
+        // left or right so that ear still hears it. Centre and sub (channels 2 and 3 in surround) stay.
+        static float[] Panned(float[] levels, double p)
+        {
+            var panned = (float[])levels.Clone();
+            if (levels.Length < 2) return panned;
+            double left = p > 0 ? 1 - 0.7 * p : 1, right = p < 0 ? 1 + 0.7 * p : 1;
+            for (int i = 0; i < panned.Length; i++)
+                if (i != 2 && i != 3) panned[i] *= (float)(i % 2 == 0 ? left : right);
+            return panned;
         }
 
         static bool IsSystemProcess(AudioSession s)
@@ -348,12 +370,15 @@ namespace BTHeadUnit
             var original = new Dictionary<string, float>();   // session -> its mixer volume before we touched it
             var lastSet = new Dictionary<string, float>();
             var unmuted = new HashSet<string>();               // sessions that were muted in the mixer when we took them
+            var originalChannels = new Dictionary<string, float[]>();   // session -> its channel volumes before we touched it
+            var lastPan = new Dictionary<string, float>();     // only sessions we've panned
             var btSessions = new HashSet<string>();
             var seen = new HashSet<string>();
             HashSet<string> baseline = null;
             var sessions = new List<AudioSession>();
             long lastScan = -100000;
             double gainPc = -1, gainBt = -1;   // -1: not driving yet, start from the app's own volume
+            double panNow = 0;
             bool wasLinked = false;
             string lastScanError = null;
 
@@ -390,12 +415,13 @@ namespace BTHeadUnit
                 }
 
                 bool linked;
-                double target;
+                double target, targetPan;
                 string src, pc;
                 lock (sync)
                 {
                     linked = !quit && now - lastStateMs < LinkTimeoutMs;
                     target = TargetGain();
+                    targetPan = TargetPan();
                     src = source;
                     pc = pcProc;
                 }
@@ -406,6 +432,7 @@ namespace BTHeadUnit
                 if (!linked) gainPc = gainBt = -1;
                 if (gainPc >= 0) gainPc += ((src == "pc" ? target : 0) - gainPc) * 0.3;
                 if (gainBt >= 0) gainBt += ((src == "bt" ? target : 0) - gainBt) * 0.3;
+                panNow = linked ? panNow + (targetPan - panNow) * 0.3 : 0;
 
                 var controlled = new HashSet<string>();
                 if (linked)
@@ -425,6 +452,7 @@ namespace BTHeadUnit
                                 orig = s.Get();
                                 if (orig < 0) continue;
                                 original[s.Key] = orig;
+                                originalChannels[s.Key] = s.GetChannels();
                                 lock (savedVolumes) savedVolumes[s.Proc] = orig;
                                 SaveState();
                                 // A stream muted in the Windows mixer stays silent whatever its volume,
@@ -446,6 +474,14 @@ namespace BTHeadUnit
                                 s.Set(want);
                                 lastSet[s.Key] = want;
                             }
+                            float wantPan = (float)panNow, prevPan;
+                            lastPan.TryGetValue(s.Key, out prevPan);   // 0 if never panned: left alone until it moves
+                            float[] channels = originalChannels[s.Key];
+                            if (channels != null && Math.Abs(prevPan - wantPan) > 0.005f)
+                            {
+                                s.SetChannels(Panned(channels, wantPan));
+                                lastPan[s.Key] = wantPan;
+                            }
                         }
                         catch (Exception) { }
                     }
@@ -461,12 +497,15 @@ namespace BTHeadUnit
                         {
                             s.Set(original[key]);
                             if (unmuted.Contains(key)) s.SetMuted(true);
+                            if (lastPan.ContainsKey(key)) s.SetChannels(originalChannels[key]);
                         }
                     }
                     catch (Exception) { }
                     original.Remove(key);
                     lastSet.Remove(key);
                     unmuted.Remove(key);
+                    originalChannels.Remove(key);
+                    lastPan.Remove(key);
                 }
                 if (original.Count == 0 && savedVolumes.Count > 0)
                 {
@@ -488,7 +527,10 @@ namespace BTHeadUnit
                 foreach (var s in CoreAudio.GetSessions())
                 {
                     float v;
-                    if (savedVolumes.TryGetValue(s.Proc, out v)) s.Set(v);
+                    if (!savedVolumes.TryGetValue(s.Proc, out v)) continue;
+                    s.Set(v);
+                    var channels = s.GetChannels();   // and centre a pan that never got undone
+                    if (channels != null) s.SetChannels(channels.Select(_ => 1f).ToArray());
                 }
                 Log("Put back app volumes left over from last time.");
             }
